@@ -75,6 +75,11 @@
 			// Determine new dimensions
 			left = this.positionStart.left; top = this.positionStart.top;
 			right = event.pageX; bottom = event.pageY;
+
+			// Apply correct position classes
+			this._updateClasses(left, top, right, bottom);
+
+			// Adjust for negative-left movement
 			if(left > right) { tmp = right; right = left; left = tmp; }
 			if(top > bottom) { tmp = bottom; bottom = top; top = tmp; }
 
@@ -101,10 +106,7 @@
 				tmp;
 
 			// Apply correct position classes
-			this.elem.toggleClass('right', left <= right)
-				.toggleClass('left', left > right)
-				.toggleClass('bottom', top <= bottom)
-				.toggleClass('top', top > bottom);
+			this._updateClasses(left, top, right, bottom);
 
 			// Adjust for negative-left movement
 			if(left > right) { tmp = right; right = left; left = tmp; }
@@ -128,6 +130,13 @@
 			if((this.target = target)) {
 				this.update();
 			}
+		},
+
+		_updateClasses: function(left, top, right, bottom) {
+			this.elem.toggleClass('right', left <= right)
+				.toggleClass('left', left > right)
+				.toggleClass('bottom', top <= bottom)
+				.toggleClass('top', top > bottom);
 		},
 
 		_bindToHandle: function() {
@@ -182,9 +191,6 @@
 			else {
 				this.elem.remove();
 			}
-
-			// Remove sqaures lol
-			squares.remove(); squares = $();
 
 			return !!this.target;
 		}
@@ -302,31 +308,10 @@
 				toleranceW = Math.ceil(anchorable.width * tolerance),
 				toleranceH = Math.ceil(anchorable.height * tolerance);
 
-			createSquare(l-toleranceW, t - toleranceH, toleranceW * 2, toleranceH * 2);
-
 			return x >= (l - toleranceW) && x <= (l + toleranceW) && 
 				y >= (t - toleranceH) && y <= (t + toleranceH);
 		}
 	});
 
-	var squares = $();
-	function createSquare(left, top, width, height, color) {
-		squares = squares.add(
-			$('<div/>', {
-				css: {
-					position: 'absolute',
-					background: color || 'red',
-					left: left,
-					top: top,
-					width: width,
-					height: height,
-					zIndex: 100000000
-				}
-			})
-			.appendTo(document.body)
-		);
-	}
-
-
-	window.dd = new DDManager();
+	var dd = new DDManager();
 }());
