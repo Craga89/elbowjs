@@ -141,7 +141,8 @@
 
 		_bindToHandle: function() {
 			var _this = this,
-				draggable = this.handle.closest('.ui-draggable');
+				draggable = this.handle.closest('.ui-draggable'),
+				resizable = this.handle.closest('.ui-resizable');
 
 			draggable.on('drag'+this._ns, function(event, ui) {
 				// Update handle properties
@@ -155,12 +156,19 @@
 				_this.update();
 			});
 
-			this._handleBindees = [draggable];
+			resizable.on('resize'+this._ns, function(event, ui) {
+				// Update dimensions and update visually
+				_this.handleProportions = ui.size;
+				_this.update();
+			});
+
+			this._handleBindees = [draggable, resizable];
 		},
 
 		_bindToTarget: function() {
 			var _this = this,
-				draggable = this.target.element.closest('.ui-draggable');
+				draggable = this.target.element.closest('.ui-draggable'),
+				resizable = this.target.element.closest('.ui-resizable');
 
 			draggable.on('drag'+this._ns, function(event, ui) {
 				// Update handle properties
@@ -172,7 +180,14 @@
 				_this.update();
 			});
 
-			this._targetBindees = [draggable];
+			resizable.on('resize'+this._ns, function(event, ui) {
+				// Update dimensions and update visually
+				_this.target.width = ui.size.width;
+				_this.target.height = ui.size.height;
+				_this.update();
+			});
+
+			this._targetBindees = [draggable, resizable];
 		},
 
 		_unbindFromTarget: function() {
